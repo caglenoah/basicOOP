@@ -27,6 +27,10 @@ class Item {
   apply_discount() {
     this.price = this.price * Item.pay_rate;
   }
+
+  toString() {
+    return `Item('${this.name}', ${this.price}, ${this.quantity})`;
+  }
 }
 
 const item1 = new Item("Phone", 100, 1);
@@ -35,6 +39,4 @@ const item3 = new Item("Cable", 10, 5);
 const item4 = new Item("Mouse", 50, 5);
 const item5 = new Item("Keyboard", 75, 5);
 
-for (const instance of Item.all) {
-  console.log(instance.name);
-}
+console.log(Item.all.map((item) => item.toString()));
