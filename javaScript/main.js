@@ -1,16 +1,16 @@
+const fs = require("fs");
+
 class Item {
-  static pay_rate = 0.8; // The pay rate after 0% discount
+  static pay_rate = 0.8; // The pay rate after a 20% discount
   static all = [];
 
   constructor(name, price, quantity = 0) {
-    // Run validations to the recieved arguments
+    // Run validations on the received arguments
     if (price < 0) {
-      throw new Error("Price ${price} is not greater than or equal to zero!");
+      throw new Error(`Price ${price} is not greater than or equal to zero!`);
     }
     if (quantity < 0) {
-      throw new Error(
-        "Quantity ${quantity} is not greater than or equal to zero!"
-      );
+      throw new Error(`Quantity ${quantity} is not greater or equal to zero!`);
     }
 
     // Assign to this object
@@ -21,11 +21,28 @@ class Item {
     // Actions to execute
     Item.all.push(this);
   }
+
   calculate_total_price() {
     return this.price * this.quantity;
   }
+
   apply_discount() {
     this.price = this.price * Item.pay_rate;
+  }
+
+  static instantiateFromCSV() {
+    const fileContent = fs.readFileSync("items.csv", "utf-8");
+    const items = fileContent
+      .trim()
+      .split("\n")
+      .map((line) => {
+        const [name, price, quantity] = line.split(",");
+        return { name, price: parseFloat(price), quantity: parseInt(quantity) };
+      });
+
+    for (const item of items) {
+      new Item(item.name, item.price, item.quantity);
+    }
   }
 
   toString() {
@@ -33,10 +50,5 @@ class Item {
   }
 }
 
-const item1 = new Item("Phone", 100, 1);
-const item2 = new Item("Laptop", 1000, 3);
-const item3 = new Item("Cable", 10, 5);
-const item4 = new Item("Mouse", 50, 5);
-const item5 = new Item("Keyboard", 75, 5);
-
+Item.instantiateFromCSV();
 console.log(Item.all.map((item) => item.toString()));
